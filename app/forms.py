@@ -4,8 +4,8 @@ from wtforms.fields.html5 import DateField, TimeField
 # from wtforms_components import TimeField
 
 class UserInput(FlaskForm):
-    niehgborhood = SelectField(
-	'Nieghborhood',choices=[('Downtown','Downtown'), ('Brady','Brady'), ('Bayview', 'Bayview'), ('Walkers Point',
+    neighborhood = SelectField(
+	'Neighborhood',choices=[('Downtown','Downtown'), ('Brady','Brady'), ('Bayview', 'Bayview'), ('Walkers Point',
                             'Walkers Point')] )
     date = DateField('Date', format='%Y-%m-%d')
     time = TimeField('Time of Day', format='%H:%M')
