@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField
 from wtforms.fields.html5 import DateField, TimeField
-# from wtforms_components import TimeField
+
 
 class UserInput(FlaskForm):
     neighborhood = SelectField(
