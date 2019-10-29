@@ -72,26 +72,18 @@
           <table>
             <thead>
               <tr class="table100-head">
-                <th class="column1">User Input</th>
+                
                 <th colspan="2" class="column1">Crime Stats</th>
               </tr>
             </thead>
-            <tbody>
-                <tr>
-                  <td rowspan="6" class="column1">{{ chat_in }}</td>
-                  <!-- <td rowspan="6" class="column1">{{ chat_in }}</td> -->
-                  <td class="column1">{{prediction[0]['name']}}</td>
-                  <td class="column2">{{ (100 * prediction[0]['prob']) | round}}%</td>
-                </tr>
-                <tr>
-                  <td class="column1">{{prediction[1]['name']}}</td>
-                  <td class="column2">{{ (100 * prediction[1]['prob']) | round}}%</td>
-                </tr>
-                <tr>
-                  <td class="column1">{{prediction[2]['name']}}</td>
-                  <td class="column2">{{ (100 * prediction[2]['prob']) | round}}%</td>
-                </tr>
-            </tbody>
+            {% for item in scores %}
+            <TR>
+               
+               <TD class="column1">{{item.name}}</TD>
+               <TD class="column2">{{item.score}}</TD>
+
+            </TR>
+            {% endfor %}
           </table>
           <br>
 
