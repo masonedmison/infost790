@@ -4,11 +4,11 @@ from wtforms.validators import required
 from wtforms.fields.html5 import DateField, TimeField
 
 
+# add time slots! 
 class UserInput(FlaskForm):
-    address = StringField('Address', validators=[required()])
+    address = StringField('Address')
     zip_code = StringField('Zip Code', validators=[required()])
-    date = DateField('Date', format='%Y-%m-%d')
-    time = TimeField('Time of Day', format='%H:%M')
+    time = SelectField('Time',validators=[required()], choices=[('12pm - 8am','12pm - 8am'),('8am - 4pm', '8am - 4pm'),('4pm -12pm', '4pm -12pm')])
     submit = SubmitField('Submit')
 
 

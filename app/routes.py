@@ -1,23 +1,20 @@
+"""Where Milwaukee Crime Watch routes live"""
+
 from flask import render_template, flash, redirect, jsonify
 from app import app
+from crime_score_api import generate_stats
 from app.forms import UserInput
-import datetime
+
 
 
 @app.route('/', methods=['GET', 'POST'])
 def user_input():
-    predict_mock = [
-        dict(name='Crime Score', score=25),
-        dict(name='Median', score=25),
-        dict(name='Mode', score=25)
-    ]
     form = UserInput()
+    stats = [] # show no results upon visiting page
     if form.validate_on_submit():
-        repr(type(form.time))
-        return jsonify(dict(activity=form.neighborhood.data, date=form.date.data.strftime('%Y-%m-%d'),
-                            time=form.time.data.strftime('%H:%M')))
-    return render_template('user_input.html', form=form, scores=predict_mock)
-
-@app.route('/output', methods=['GET'])
-def output():
-    pass
+        #score_dict = calculate_scores(form.zip_code, form.time)
+        zip_ = form.zip_code.data
+        stats = generate_stats(zip_) 
+        return render_template('user_input.html', form=form, scores=stats)
+    
+    return render_template('user_input.html', form=form, scores=stats)
