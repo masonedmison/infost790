@@ -2,9 +2,8 @@
 
 from flask import render_template, flash, redirect, jsonify
 from app import app
-from crime_score_api import generate_stats
 from app.forms import UserInput
-
+from crime_score_api import generate_stats
 
 
 @app.route('/', methods=['GET', 'POST'])

@@ -75,6 +75,7 @@ src="https://uwm.maps.arcgis.com/apps/Minimalist/index.html?appid=0c0f9aade5664a
   </p>
     <br>
     <br>
+    {% if scores %}
           <table>
             <thead>
               <tr class="table100-head">
@@ -91,6 +92,10 @@ src="https://uwm.maps.arcgis.com/apps/Minimalist/index.html?appid=0c0f9aade5664a
             </TR>
             {% endfor %}
           </table>
+
+    {% else %}
+    <br>
+     {% endif %}
           <br>
 
         </div>

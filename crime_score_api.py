@@ -4,10 +4,10 @@ import pandas as pd
 from app import cursor # cursor object to execute queries
 
 
+# crime score api
 ZIP_CODE_SQ = json.load(open('processing/mappings/zip_square_miles.json'))
-CRIME_TYPE_COLS = ['Arson', 'AssaultOffense', 'Burglary',
-       'CriminalDamage', 'Homicide', 'LockedVehicle', 'Robbery', 'SexOffense',
-       'Theft', 'VehicleTheft']
+CRIME_TYPE_COLS = ['arson', 'assault', 'burglary', 'damage',
+    'homicide', 'lv', 'robbery', 'sexoff', 'theft','cartheft']
 
 
 # ----------------Queries-------------------
@@ -20,8 +20,8 @@ def query_all_crimes(zip):
 
 # -----------Data Extraction ---------------
 def get_most_common_crime(res):
-   """get most commons crime for a set of results"""
-    return max(res.CrimeType.unique())
+   """get most common crime"""
+   return res.CrimeType.value_counts().index[0]
 
 
 def crimes_per_square_mile(df, zip_):
@@ -38,9 +38,11 @@ def get_time_span(res):
 
 # -------------Pandas functions-----------------
 def create_crime_cat(df):
-    """assign caterory to CrimeType column based off of boolean crime type columns"""
+    """Creates CrimeType column and populates based off boolean values in CRIME TYPE COLUMNS"""
+    df['CrimeType'] = ''
     for ct in CRIME_TYPE_COLS:
-        sub = df[df[f'{ct}']==1]
+        c_int = df[ct].astype('int32')
+        sub = c_int[c_int == 1] 
         df.CrimeType.iloc[sub.index] = ct
 
 
@@ -55,8 +57,8 @@ def generate_stats(zip_):
     stats =[]
     res = query_all_crimes(zip_)
     crimes = to_df(res)
-    create_crime_cat(crime)  # creates crime category in place
-    most_comm_crime = get_most_common_crime(crime)
+    create_crime_cat(crimes)  # creates crime category in place
+    most_comm_crime = get_most_common_crime(crimes)
     crimes_per_sq_mile = crimes_per_square_mile(crimes, zip_)
 
     ####
