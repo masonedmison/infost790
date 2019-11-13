@@ -6,14 +6,14 @@ from processing import weight_norm
 from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations)
 
 # ----------------Queries-------------------
-def query_all_crimes(zip):
+def query_all_crimes(zip_):
     """get all crimes by zip from crime table"""
-    q_str = f"""SELECT * FROM "Crime" WHERE zip={zip} ;"""
+    q_str = f"""SELECT * FROM "Crime" WHERE zip={zip_} ;"""
     cursor.execute(q_str)
     return cursor.fetchall()
 # -----------------------------------------
 
-# -----------Data Extraction ---------------
+# -----------Computations---------------
 def get_most_common_crime(res):
    """get most common crime"""
    return res.CrimeType.value_counts().index[0]
@@ -26,6 +26,16 @@ def crimes_per_square_mile(df, zip_):
     zip_sq = zip_sq_miles[zip_]
     return len(df)/ zip_sq
 
+
+def compute_crime_score(df, zip_):
+    """compute crime score"""
+    z_pop = zip_populations[zip_]
+    return df.CrimeType.sum()/ z_pop
+
+
+def crime_score_bdown():
+    """create breakdown of crime score"""
+    pass
 
 # -------------------------------------------
 
@@ -50,6 +60,7 @@ def integrate_weight_to_df(df):
     for k,v in w.items():
         sub = df[df.CrimeType==k]
         df.CrimeWeight[sub.index] = v
+
 # ------------------------------------------------
 
 # -------------driver methods-------------------
@@ -58,10 +69,14 @@ def generate_stats(zip_):
     stats =[]
     res = query_all_crimes(zip_)
     crimes = to_df(res)
-    create_crime_cat(crimes)  # creates crime category in place
+    # add recode cols
+    create_crime_cat(crimes) 
+    integrate_weight_to_df(crimes)
+    ####
+    # gets various scores
     most_comm_crime = get_most_common_crime(crimes)
     crimes_per_sq_mile = crimes_per_square_mile(crimes, zip_)
-
+    cas = compute_crime_score(crimes, zip_)  
     ####
     # build crime statistics dictionary
     stats.append(dict(name='Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
