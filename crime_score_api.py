@@ -3,12 +3,7 @@ import json
 import pandas as pd
 from app import cursor # cursor object to execute queries
 from processing import weight_norm
-
-ZIP_CODE_SQ = json.load(open('processing/mappings/zip_square_miles.json'))
-CRIME_TYPE_COLS = ['arson', 'assault', 'burglary', 'damage',
-    'homicide', 'lv', 'robbery', 'sexoff', 'theft','cartheft']
-CRIME_TYPE_PRETT = {
-    'arson':'Arson', 'assault':'Assualt', 'burglary':'Burglary', 'damage':'Vandalism', 'homicide':'Homicide', 'lv':'Locked Vehicle', 'robbery':'Robbery', 'sexoff':'Sexual Assualt', 'theft':'Theft','cartheft':'Car Theft'}
+from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations)
 
 # ----------------Queries-------------------
 def query_all_crimes(zip):
@@ -26,9 +21,9 @@ def get_most_common_crime(res):
 
 def crimes_per_square_mile(df, zip_):
     """Crimes per square mile"""
-    if zip_ not in ZIP_CODE_SQ.keys():
+    if zip_ not in zip_sq_miles.keys():
         return -1
-    zip_sq = ZIP_CODE_SQ[zip_]
+    zip_sq = zip_sq_miles[zip_]
     return len(df)/ zip_sq
 
 
@@ -38,7 +33,7 @@ def crimes_per_square_mile(df, zip_):
 def create_crime_cat(df):
     """Creates CrimeType column and populates based off boolean values in CRIME TYPE COLUMNS"""
     df['CrimeType'] = ''
-    for ct in CRIME_TYPE_COLS:
+    for ct in crime_type_cols:
         c_int = df[ct].astype('int32')
         sub = c_int[c_int == 1]
         df.CrimeType.iloc[sub.index] = ct
@@ -50,7 +45,7 @@ def to_df(res):
 
 def integrate_weight_to_df(df):
     """create CrimeWeight columnm using max-min normalized values from Cambridge Average Harm Index"""
-    w = weights_norm.max_min_norm()
+    w = weight_norm.max_min_norm()
     df['CrimeWeight'] = ''
     for k,v in w.items():
         sub = df[df.CrimeType==k]
@@ -69,7 +64,7 @@ def generate_stats(zip_):
 
     ####
     # build crime statistics dictionary
-    stats.append(dict(name='Common Crime', score = CRIME_TYPE_PRETT[most_comm_crime]))  # most common crime
+    stats.append(dict(name='Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
     stats.append(dict(name='Crimes per Square Mile', score = crimes_per_sq_mile))  # Crimes per square mile
 
     return stats
