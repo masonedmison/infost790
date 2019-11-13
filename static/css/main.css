@@ -296,21 +296,16 @@ tbody tr:hover {
     font-weight: unset;
     position: absolute;
     width: 40%;
-    left: 30px;
+    left: 40px;
     top: 0;
   }
 	table tbody tr td:nth-child(0):before {
-		content: "Input";
+		content: "Name";
 	}
   table tbody tr td:nth-child(1):before {
-    content: "Label";
+    content: "Result";
   }
-  table tbody tr td:nth-child(2):before {
-    content: "Probability";
-  }
-  table tbody tr td:nth-child(3):before {
-    content: "Name";
-  }
+
   .column4,
 	.column5,
   .column6 {

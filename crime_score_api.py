@@ -1,14 +1,14 @@
-"""a place for querying and processing"""
+"""a place for querying and processing or the stuff that creates the score shown on in the user table"""
 import json
 import pandas as pd
 from app import cursor # cursor object to execute queries
+from processing import weight_norm
 
-
-# crime score api
 ZIP_CODE_SQ = json.load(open('processing/mappings/zip_square_miles.json'))
 CRIME_TYPE_COLS = ['arson', 'assault', 'burglary', 'damage',
     'homicide', 'lv', 'robbery', 'sexoff', 'theft','cartheft']
-
+CRIME_TYPE_PRETT = {
+    'arson':'Arson', 'assault':'Assualt', 'burglary':'Burglary', 'damage':'Vandalism', 'homicide':'Homicide', 'lv':'Locked Vehicle', 'robbery':'Robbery', 'sexoff':'Sexual Assualt', 'theft':'Theft','cartheft':'Car Theft'}
 
 # ----------------Queries-------------------
 def query_all_crimes(zip):
@@ -32,8 +32,6 @@ def crimes_per_square_mile(df, zip_):
     return len(df)/ zip_sq
 
 
-def get_time_span(res):
-    pass
 # -------------------------------------------
 
 # -------------Pandas functions-----------------
@@ -42,13 +40,21 @@ def create_crime_cat(df):
     df['CrimeType'] = ''
     for ct in CRIME_TYPE_COLS:
         c_int = df[ct].astype('int32')
-        sub = c_int[c_int == 1] 
+        sub = c_int[c_int == 1]
         df.CrimeType.iloc[sub.index] = ct
 
 
 def to_df(res):
     return pd.DataFrame(data=res, columns=[x[0] for x in cursor.description])
 
+
+def integrate_weight_to_df(df):
+    """create CrimeWeight columnm using max-min normalized values from Cambridge Average Harm Index"""
+    w = weights_norm.max_min_norm()
+    df['CrimeWeight'] = ''
+    for k,v in w.items():
+        sub = df[df.CrimeType==k]
+        df.CrimeWeight[sub.index] = v
 # ------------------------------------------------
 
 # -------------driver methods-------------------
@@ -63,7 +69,7 @@ def generate_stats(zip_):
 
     ####
     # build crime statistics dictionary
-    stats.append(dict(name='Common Crime', score = most_comm_crime))  # most common crime
+    stats.append(dict(name='Common Crime', score = CRIME_TYPE_PRETT[most_comm_crime]))  # most common crime
     stats.append(dict(name='Crimes per Square Mile', score = crimes_per_sq_mile))  # Crimes per square mile
 
     return stats
