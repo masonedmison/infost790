@@ -4,6 +4,7 @@ zip_sq_miles = {"53007": -1, "53202": 2, "53203": 0, "53204": 3, "53205": 1, "53
 
 crime_type_cols = ['arson', 'assault', 'burglary', 'damage',
     'homicide', 'lv', 'robbery', 'sexoff', 'theft','cartheft']
+
 crime_type_prett = {
     'arson':'Arson', 'assault':'Assualt', 'burglary':'Burglary', 'damage':'Vandalism', 'homicide':'Homicide', 'lv':'Locked Vehicle', 'robbery':'Robbery', 'sexoff':'Sexual Assualt', 'theft':'Theft','cartheft':'Car Theft'}
 

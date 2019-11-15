@@ -30,11 +30,14 @@ def crimes_per_square_mile(df, zip_):
 def compute_crime_score(df, zip_):
     """compute crime score"""
     z_pop = zip_populations[zip_]
-    return df.CrimeType.sum()/ z_pop
+    return df.CrimeWeight.sum()/ z_pop
 
 
-def crime_score_bdown():
-    """create breakdown of crime score"""
+def crime_score_bdown(com_crime):
+    """create breakdown of crime score
+    Returns:
+        str of crime score breakdown (most common crime and crime per 1000)
+    """
     pass
 
 # -------------------------------------------
@@ -56,7 +59,7 @@ def to_df(res):
 def integrate_weight_to_df(df):
     """create CrimeWeight columnm using max-min normalized values from Cambridge Average Harm Index"""
     w = weight_norm.max_min_norm()
-    df['CrimeWeight'] = ''
+    df['CrimeWeight'] = float(0) 
     for k,v in w.items():
         sub = df[df.CrimeType==k]
         df.CrimeWeight[sub.index] = v
@@ -79,8 +82,8 @@ def generate_stats(zip_):
     cas = compute_crime_score(crimes, zip_)  
     ####
     # build crime statistics dictionary
-    stats.append(dict(name='Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
-    stats.append(dict(name='Crimes per Square Mile', score = crimes_per_sq_mile))  # Crimes per square mile
-
+    stats.append(dict(name='Crime Assessment Score', score = cas))  # crime assessment score
+    stats.append(dict(name='Most Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
+    stats.append(dict(name='Crimes Per Square Mile', score = crimes_per_sq_mile))  # most common crime
     return stats
     ####

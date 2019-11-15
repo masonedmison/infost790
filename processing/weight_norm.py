@@ -21,7 +21,7 @@ def max_min_norm():
     """normalize values of crime weight dict_"""
     dict_ = w.copy()
     for k, v in dict_.items():
-        norm_v = (v-min_)/(max_-min_)
+        norm_v = float((v-min_)/(max_-min_))
         dict_[k] = norm_v
     return dict_
 
@@ -30,6 +30,6 @@ def mean_norm():
     """compute mean-norm of vaues in dictionary"""
     dict_ = w.copy()
     for k,v in dict_.items():
-        m_norm = (v-mean_)/(max_-min_)
+        m_norm = float((v-mean_)/(max_-min_))
         dict_[k] = m_norm
     return dict_
