@@ -1,7 +1,9 @@
 """normalize weights for crime_score"""
+from statistics import mean
 import numpy as np
+from mappings import time_slots
 
-
+# Weights as given in the Cambridge Harm Index
 w = {'arson':1032.275,
 'assault':560.4556,
 'burglary':267.8036,
@@ -12,11 +14,11 @@ w = {'arson':1032.275,
 'damage':166.8448,
 'cartheft':36.96875}
 
-max_ = 1438.667
-min_ = 2.833
+max_ = max(list(w.values()))
+min_ = min(list(w.values())) 
 mean_ = np.sum(list(w.values()))/len(w.values())
 
-
+# ---------normazlization stuff-----------
 def max_min_norm():
     """normalize values of crime weight dict_"""
     dict_ = w.copy()
@@ -33,3 +35,14 @@ def mean_norm():
         m_norm = float((v-mean_)/(max_-min_))
         dict_[k] = m_norm
     return dict_
+# --------------------------------------
+
+# -------miscellaneous computations---------
+def extract_time_slot(df):
+    """extract all crimes that happen within a 'time_slot'"""
+    pass
+
+
+def get_relative_crime_scores(df):
+    """compute relative crime scores for all of Milwaukee for each timeslot option"""
+    pass

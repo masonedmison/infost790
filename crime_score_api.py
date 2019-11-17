@@ -2,7 +2,7 @@
 import json
 import pandas as pd
 from app import cursor # cursor object to execute queries
-from processing import weight_norm
+from processing import static_computations 
 from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations)
 
 # ----------------Queries-------------------
@@ -58,7 +58,7 @@ def to_df(res):
 
 def integrate_weight_to_df(df):
     """create CrimeWeight columnm using max-min normalized values from Cambridge Average Harm Index"""
-    w = weight_norm.max_min_norm()
+    w = static_computations.max_min_norm()
     df['CrimeWeight'] = float(0) 
     for k,v in w.items():
         sub = df[df.CrimeType==k]
