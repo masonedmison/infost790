@@ -1,9 +1,10 @@
 """a place for querying and processing or the stuff that creates the score shown on in the user table"""
 import json
+import datetime
 import pandas as pd
 from app import cursor # cursor object to execute queries
 from processing import static_computations 
-from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations)
+from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations, time_str_to_time)
 
 # ----------------Queries-------------------
 def query_all_crimes(zip_):
@@ -64,14 +65,29 @@ def integrate_weight_to_df(df):
         sub = df[df.CrimeType==k]
         df.CrimeWeight[sub.index] = v
 
+def extract_crimes_by_sl(df, time_sl):
+    """extract crimes by a given time slot"""
+    dt_l = []
+    for r in df.iterrows():
+        dt_l.append(datetime.datetime.combine(r[1].date1, r[1].time1))
+        
+    df['datetime'] = dt_l
+    df.set_index('datetime', inplace=True)
+    return df.between_time(time_sl[0], time_sl[1])
+
 # ------------------------------------------------
 
 # -------------driver methods-------------------
-def generate_stats(zip_):
+def generate_stats(zip_, time_sl):
     """takes a zip code and generates relevant stats using other methods in this module"""
     stats =[]
     res = query_all_crimes(zip_)
     crimes = to_df(res)
+    # extract relevant crimes by time slot
+    time_obj = time_str_to_time[time_sl]  # time span to find all crimes within 
+    crimes = extract_crimes_by_sl(crimes, time_obj)
+    crimes.reset_index(inplace=True) 
+    ####
     # add recode cols
     create_crime_cat(crimes) 
     integrate_weight_to_df(crimes)

@@ -13,4 +13,4 @@ zip_populations = {'53007': 1841, '53202': 23386, '53203': 938, '53204': 42355, 
 
 time_slots = ('12am - 8am','12pm - 8am'),('8am - 4pm', '8am - 4pm'),('4pm -12pm', '4pm -12am')
 
-time_str_to_time = [(time(23,59), time(8,0)),(time(8,0), time(16,0)),(time(16,0), time(23,59))]
+time_str_to_time = {'12am - 8am': (time(23,59), time(8,0)),'8am - 4pm':(time(8,0), time(16,0)),'4pm -12pm':(time(16,0), time(23,59))}

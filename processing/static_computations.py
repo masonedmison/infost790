@@ -38,11 +38,6 @@ def mean_norm():
 # --------------------------------------
 
 # -------miscellaneous computations---------
-def extract_time_slot(df):
-    """extract all crimes that happen within a 'time_slot'"""
-    pass
-
-
 def get_relative_crime_scores(df):
     """compute relative crime scores for all of Milwaukee for each timeslot option"""
     pass
