@@ -3,7 +3,7 @@ import json
 import datetime
 import pandas as pd
 from app import cursor # cursor object to execute queries
-from processing import static_computations 
+import static_computations 
 from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations, time_str_to_time)
 
 # ----------------Queries-------------------

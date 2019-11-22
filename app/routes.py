@@ -11,7 +11,7 @@ def user_input():
     form = UserInput()
     stats = [] # show no results upon visiting page
     if form.validate_on_submit():
-        zip_ = form.zip_code.data
+        zip_ = form.zip_code.data.strip()
         time_sl = form.time.data
         stats = generate_stats(zip_, time_sl) 
         return render_template('user_input.html', form=form, scores=stats)

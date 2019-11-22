@@ -36,8 +36,3 @@ def mean_norm():
         dict_[k] = m_norm
     return dict_
 # --------------------------------------
-
-# -------miscellaneous computations---------
-def get_relative_crime_scores(df):
-    """compute relative crime scores for all of Milwaukee for each timeslot option"""
-    pass
