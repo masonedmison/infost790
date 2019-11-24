@@ -31,9 +31,10 @@ def extract_crimes_by_sl(df, time_sl):
 # visualize crimes by week for zip code and time sl 
 def time_sl_vis(df, z):
     """plots sum of crime weights by week for each zip_code - time slots not specified"""
-    df.index = df.index.to_period('W')
+    df.index = df.index.to_period('Q')
     scores_ = [rel_scores.compute_crime_score(df.loc[i], z) for i in df.index.unique()]        
-    x = df.index.unique().to_timestamp().values
+    x = df.index.unique().to_timestamp().tolist()
+    x = [xx.strftime('%m/%Y') for xx in x]
     plt.plot(x, scores_) 
     plt.show()
 
@@ -42,5 +43,4 @@ crimes = rel_scores.to_df(res)
 rel_scores.create_crime_cat(crimes)
 rel_scores.integrate_weight_to_df(crimes)
 create_datetime_i(crimes)
-print(crimes.date1.head())
 time_sl_vis(crimes, zip_)
