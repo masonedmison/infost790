@@ -6,3 +6,4 @@ isolate.py
 /processing/__pycache__
 app/__pycache__
 __pycache__
+.vscode/
