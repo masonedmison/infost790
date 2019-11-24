@@ -66,7 +66,7 @@ def get_mke_scores():
     _scores = {k:[] for k in time_str_to_time.keys()} 
     _scores['all'] = []  # add key for all milwaukee and all time zones
     for zip_ in zip_populations.keys(): 
-        res = query_all_crimes(zip_)
+        res = query_all_crimes(zip_=zip_)
         print(f'[PROCESSING] {zip_}')
         crimes = to_df(res)
         create_crime_cat(crimes)
@@ -89,9 +89,17 @@ def compute_desc_stats(score_d):
         std = np.std(score_d[d])
         _scores[d]['mean'] = mean
         _scores[d]['std'] = std
+        _scores[d]['max'] = max(score_d[d])
+        _scores[d]['min'] = min(score_d[d])
+            
     return _scores
 
-if __name__ == '__main__':
+
+def display_mke_desc_stats():
     all_scores = get_mke_scores()
     desc_stats = compute_desc_stats(all_scores)
     print(desc_stats)
+
+
+if __name__ == '__main__':
+    display_mke_desc_stats()

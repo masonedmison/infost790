@@ -4,12 +4,15 @@ import datetime
 import pandas as pd
 from app import cursor # cursor object to execute queries
 import static_computations 
-from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations, time_str_to_time)
+from mappings import (zip_sq_miles, crime_type_cols, crime_type_prett, zip_populations, time_str_to_time, mke_rel_scores)
 
 # ----------------Queries-------------------
-def query_all_crimes(zip_):
+def query_all_crimes(zip_= None):
     """get all crimes by zip from crime table"""
-    q_str = f"""SELECT * FROM "Crime" WHERE zip={zip_} ;"""
+    if zip_ is not None:
+        q_str = f"""SELECT * FROM "Crime" WHERE zip={zip_} ;"""
+    else:  # else get all the data 
+        q_str = f"""SELECT * FROM "Crime"  ;"""
     cursor.execute(q_str)
     return cursor.fetchall()
 # -----------------------------------------
@@ -41,6 +44,21 @@ def crime_score_bdown(com_crime):
     """
     pass
 
+
+def calc_percentile(i_score, zip_, df):
+    zips_to_calc = set(zip_populations.keys())
+    zips_to_calc.remove(zip_)  # remove zip to get percentile for
+    count = 0
+    for z in zips_to_calc:
+        s = compute_crime_score(df, z)
+        if s <= i_score:
+            count += 1
+    return 100.0 * count / len(zips_to_calc)
+
+def min_max_normalization(score_, time_sl):
+    max_ = mke_rel_scores[time_sl]['max']
+    min_ = mke_rel_scores[time_sl]['min']
+    return (score_-min_)/(max_- min_)
 # -------------------------------------------
 
 # -------------Pandas functions-----------------
@@ -81,7 +99,7 @@ def extract_crimes_by_sl(df, time_sl):
 def generate_stats(zip_, time_sl):
     """takes a zip code and generates relevant stats using other methods in this module"""
     stats =[]
-    res = query_all_crimes(zip_)
+    res = query_all_crimes(zip_=zip_)
     crimes = to_df(res)
     # extract relevant crimes by time slot
     time_obj = time_str_to_time[time_sl]  # time span to find all crimes within 
@@ -94,12 +112,13 @@ def generate_stats(zip_, time_sl):
     ####
     # gets various scores
     most_comm_crime = get_most_common_crime(crimes)
-    crimes_per_sq_mile = crimes_per_square_mile(crimes, zip_)
+    # crimes_per_sq_mile = crimes_per_square_mile(crimes, zip_)
     cas = compute_crime_score(crimes, zip_)  
+    norm_cas = min_max_normalization(cas, time_sl)
     ####
     # build crime statistics dictionary
-    stats.append(dict(name='Crime Assessment Score', score = cas))  # crime assessment score
+    stats.append(dict(name='Crime Assessment Score', score = round(norm_cas*100, 2) ))  # crime assessment score
     stats.append(dict(name='Most Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
-    stats.append(dict(name='Crimes Per Square Mile', score = crimes_per_sq_mile))  # most common crime
+    # stats.append(dict(name='Crimes Per Square Mile', score = crimes_per_sq_mile))  # most common crime
     return stats
     ####
