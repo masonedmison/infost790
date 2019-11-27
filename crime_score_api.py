@@ -35,14 +35,15 @@ def compute_crime_score(df, zip_):
     return df.CrimeWeight.sum()/ z_pop
 
 
-def crime_score_bdown(com_crime):
+def crime_score_bdown(df):
     """create breakdown of crime score
     Returns:
-        str of crime score breakdown (most common crime and crime per 1000)
+        list of dict(name=crimetype, score=num of crimes) in dataframe
     """
-    pass
+    val_counts = df.CrimeType.value_counts()
+    return  [dict(name=crime_type_prett[val_counts.index[i]], score=v) for i, v in enumerate(val_counts)]
 
-
+    
 def calc_percentile(i_score, zip_, df):
     zips_to_calc = set(zip_populations.keys())
     zips_to_calc.remove(zip_)  # remove zip to get percentile for
@@ -107,13 +108,15 @@ def time_sl_vis(df, z):
     scores_ = [compute_crime_score(df.loc[i], z) for i in df.index.unique()]        
     x = df.index.unique().to_timestamp().tolist()
     x = [xx.strftime('%m/%Y') for xx in x]  # timestamp to str
+    # reverse lists so date ascends from l-r
+    x.reverse()
+    scores_.reverse()
     return (x, scores_)
 # ------------------------------------------------
 
 # -------------driver methods-------------------
 def generate_stats(zip_, time_sl):
     """takes a zip code and generates relevant stats using other methods in this module"""
-    stats =[]
     res = query_all_crimes(zip_=zip_)
     crimes = to_df(res)
     # add recode cols
@@ -127,14 +130,17 @@ def generate_stats(zip_, time_sl):
     #visialization stuff
     vis_data = time_sl_vis(crimes, zip_)
     # gets various scores that may or may not influence breakdown
-    most_comm_crime = get_most_common_crime(crimes)
+    #most_comm_crime = get_most_common_crime(crimes)
     crimes_pop = crimes_per_pop(crimes, zip_)
     cas = compute_crime_score(crimes, zip_)  
     norm_cas = min_max_normalization(cas, time_sl)
     ####
     # build crime statistics dictionary
+    stats =[]
     stats.append(dict(name='Crime Assessment Score', score = round(norm_cas*100, 2) ))  # crime assessment score
-    stats.append(dict(name='Most Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
-    stats.append(dict(name='Crimes Per Person', score = crimes_pop))  # most common crime
+    # stats.append(dict(name='Most Common Crime', score = crime_type_prett[most_comm_crime]))  # most common crime
+    stats.append(dict(name='Crimes Per Person', score = round(crimes_pop,3)))  # most common crime
+    b_down_l = crime_score_bdown(crimes)
+    stats.extend(b_down_l)
     return stats, vis_data
     ####
