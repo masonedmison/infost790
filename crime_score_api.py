@@ -44,15 +44,6 @@ def crime_score_bdown(df):
     return  [dict(name=crime_type_prett[val_counts.index[i]], score=v) for i, v in enumerate(val_counts)]
 
     
-def calc_percentile(i_score, zip_, df):
-    zips_to_calc = set(zip_populations.keys())
-    zips_to_calc.remove(zip_)  # remove zip to get percentile for
-    count = 0
-    for z in zips_to_calc:
-        s = compute_crime_score(df, z)
-        if s <= i_score:
-            count += 1
-    return 100.0 * count / len(zips_to_calc)
 
 def min_max_normalization(score_, time_sl):
     max_ = mke_rel_scores[time_sl]['max']
